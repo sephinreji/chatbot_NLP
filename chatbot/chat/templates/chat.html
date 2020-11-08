@@ -107,6 +107,7 @@ font-size: 17px;
     <div id="btm">
         <form id="">
             <input type="text" id="text" name="" placeholder="Message..." >
+            <input id="buttonvoice" type="button" value="Voice">
             <input id="buttonInput" type="button" value="Send">
         </form>
     </div>
@@ -120,6 +121,13 @@ $("#body1").append("<div class='user2'><span>" + rawText + "</span></div>");
 $.post("", { msg: rawText }).done(function(data) {
 var botHtml = '<p class="user1"><span>' + data + '</span></p>';
 $("#body1").append("<div class='user1'><span>" + data + "</span></div>");
+let speech = new SpeechSynthesisUtterance();
+speech.lang="en-US";
+speech.text=data
+speech.volume=1;
+speech.rate=1;
+speech.pitch=1;
+window.speechSynthesis.speak(speech)
 <!--&lt;!&ndash;document.getElementById('userInput').scrollIntoView({block: 'start', behavior: 'smooth'});&ndash;&gt;-->
 });
 }

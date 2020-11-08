@@ -73,5 +73,6 @@ class Chatbot(View):
         x_tf = self.tf.transform([lma])
         cos=1-pairwise_distances(self.df_tf,x_tf,metric='cosine')
         index=cos.argmax()
+        print(index,type(cos))
         return HttpResponse(self.df['Text Response'].loc[index])
 
