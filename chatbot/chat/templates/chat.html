@@ -119,7 +119,6 @@ $("#text").val("");
 $("#body1").append("<div class='user2'><span>" + rawText + "</span></div>");
 
 $.post("", { msg: rawText }).done(function(data) {
-var botHtml = '<p class="user1"><span>' + data + '</span></p>';
 $("#body1").append("<div class='user1'><span>" + data + "</span></div>");
 let speech = new SpeechSynthesisUtterance();
 speech.lang="en-US";
@@ -140,6 +139,13 @@ getBotResponse();
 $("#buttonInput").click(function() {
 getBotResponse();
 })
+
+$("#buttonvoice").click(function(){
+$.get("/voice/").done(function(data) {
+document.getElementById("text").value= data['transcription'];
+})})
+
+
 </script>
 </body>
 </html>

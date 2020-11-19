@@ -8,9 +8,13 @@ from nltk import pos_tag
 from sklearn.metrics import pairwise_distances
 from nltk import word_tokenize
 from nltk.corpus import stopwords
+import speech_recognition as sr
+
 from django.shortcuts import render
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+
+
 # Create your views here.
 
 
@@ -55,6 +59,46 @@ def stopword_(text):
             lema_token = lema.lemmatize(token, pos_val)
             lema_word.append(lema_token)
         return " ".join(lema_word)
+def recognize_speech_from_mic(recognizer, mic):
+    # check that recognizer and microphone arguments are appropriate type
+    if not isinstance(recognizer, sr.Recognizer):
+        raise TypeError("`recognizer` must be `Recognizer` instance")
+
+    if not isinstance(mic, sr.Microphone):
+        raise TypeError("`microphone` must be `Microphone` instance")
+    with mic as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio=recognizer.listen(source)
+        print(audio)
+
+    response = {
+        "success": True,
+        "error": None,
+        "transcription": None
+    }
+    try:
+        response["transcription"]=recognizer.recognize_google(audio)
+
+    except sr.RequestError:
+        # API was unreachable or unresponsive
+        response["success"] = False
+        response["error"] = "API unavailable/unresponsive"
+    except sr.UnknownValueError:
+        # speech was unintelligible
+        response["error"] = "Unable to recognize speech"
+
+    return response
+
+
+def recognize(request):
+    if request.method=='GET':
+        r=sr.Recognizer()
+        mic= sr.Microphone(device_index=0)
+        print(sr.Microphone.list_microphone_names())
+        response = recognize_speech_from_mic(r, mic)
+        print(response)
+        return JsonResponse(response)
+
 
 class Chatbot(View):
 
